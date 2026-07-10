@@ -1,0 +1,14 @@
+{
+  "name": "Sissy Skill Tracker",
+  "short_name": "Skill Tracker",
+  "description": "A private, offline-first personal task and skill progression tracker.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f0a16",
+  "theme_color": "#171022",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

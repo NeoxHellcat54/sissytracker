@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#171022" />
+  <meta name="description" content="A private, offline-first personal skill and task progression tracker." />
+  <title>Sissy Skill Tracker</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <button class="brand" data-view="dashboard" aria-label="Open dashboard">
+        <span class="brand-mark">✦</span>
+        <span>
+          <strong>Sissy Tracker</strong>
+          <small>Progression System</small>
+        </span>
+      </button>
+
+      <nav class="nav-list">
+        <button class="nav-button active" data-view="dashboard"><span>◈</span> Dashboard</button>
+        <button class="nav-button" data-view="categories"><span>◆</span> Categories</button>
+        <button class="nav-button" data-view="objectives"><span>✦</span> Objectives</button>
+        <button class="nav-button" data-view="history"><span>◷</span> History</button>
+        <button class="nav-button" data-view="settings"><span>⚙</span> Settings</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="save-state"><span class="save-dot"></span> Saved locally</div>
+        <small>Private · Offline-ready</small>
+      </div>
+    </aside>
+
+    <section class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="page-eyebrow">PROGRESSION HUB</p>
+          <h1 id="page-title">Dashboard</h1>
+        </div>
+        <div class="topbar-actions" id="topbar-actions"></div>
+      </header>
+
+      <main id="app-content" tabindex="-1"></main>
+    </section>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button class="active" data-view="dashboard"><span>◈</span><small>Home</small></button>
+    <button data-view="categories"><span>◆</span><small>Skills</small></button>
+    <button data-view="objectives"><span>✦</span><small>Quests</small></button>
+    <button data-view="history"><span>◷</span><small>History</small></button>
+    <button data-view="settings"><span>⚙</span><small>Settings</small></button>
+  </nav>
+
+  <div id="modal-root"></div>
+  <div id="toast-root" aria-live="polite"></div>
+  <div id="celebration-root" aria-live="assertive"></div>
+  <input type="file" id="import-file" accept="application/json" hidden />
+
+  <script src="app.js"></script>
+</body>
+</html>
