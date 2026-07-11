@@ -6,6 +6,23 @@
   const MAX_LEVEL_XP = 10000;
   const XP_PER_LEVEL = 100;
 
+
+
+  const UI_STYLES = [
+    { id: "royal-pink", name: "Royal Pink", subtitle: "Crown, gold, pink, and gemstone progression", icon: "👑" },
+    { id: "neon-club", name: "Neon Club", subtitle: "Glowing nightclub pinks, purples, and cyan", icon: "💗" },
+    { id: "glitter-xp", name: "Glitter XP", subtitle: "Sparkly reward-screen energy", icon: "✨" },
+    { id: "dark-dungeon", name: "Dark Dungeon", subtitle: "Fantasy quest board with burgundy metal trim", icon: "🛡️" },
+    { id: "cute-pastel", name: "Cute Pastel", subtitle: "Soft pink, lavender, bows, and gentle cards", icon: "🎀" },
+    { id: "arcade-pixel", name: "Arcade Pixel", subtitle: "Retro game buttons, chunky XP, and pixel vibes", icon: "🕹️" },
+    { id: "luxury-black-gold", name: "Luxury Black & Gold", subtitle: "Premium black, plum, gold, and restrained shine", icon: "◆" },
+    { id: "cyber-sissy", name: "Cyber Sissy", subtitle: "Magenta/cyan futuristic tracker dashboard", icon: "▣" },
+    { id: "princess-academy", name: "Princess Academy", subtitle: "Ribbon badges, assignments, and certificate energy", icon: "🏵️" },
+    { id: "minimal-tracker", name: "Minimal Tracker", subtitle: "Clean, readable, and low-distraction", icon: "□" }
+  ];
+
+  const UI_STYLE_IDS = UI_STYLES.map(style => style.id);
+
   const CATEGORY_DEFINITIONS = [
     { id: "dress-up", name: "Dress Up", icon: "👗", accent: "#ff66b8" },
     { id: "makeup", name: "Makeup", icon: "💄", accent: "#ec4cff" },
@@ -81,6 +98,7 @@
     selectedCategoryId: null,
     objectiveTab: "active",
     historyFilter: "all",
+    activeUiStyle: null,
     installPrompt: null
   };
 
@@ -96,6 +114,7 @@
   init();
 
   function init() {
+    state.activeUiStyle = resolveUiStyle(true);
     applySettings();
     refreshObjectiveStatuses(true);
     bindGlobalEvents();
@@ -133,6 +152,7 @@
       history: [],
       settings: {
         theme: "dark",
+        uiStyle: "royal-pink",
         reduceAnimations: false,
         soundEffects: false,
         floatingXp: true,
@@ -218,10 +238,24 @@
   }
 
   function applySettings() {
-    document.documentElement.dataset.theme = state.data.settings.theme === "light" ? "light" : "dark";
+    const theme = state.data.settings.theme === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.style = resolveUiStyle(false);
     document.body.classList.toggle("reduce-motion", Boolean(state.data.settings.reduceAnimations));
-    const themeColor = state.data.settings.theme === "light" ? "#f5effa" : "#171022";
+    const themeColor = getComputedStyle(document.documentElement).getPropertyValue("--bg-elevated").trim() || (theme === "light" ? "#f5effa" : "#171022");
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor);
+  }
+
+  function resolveUiStyle(forceNewRandom = false) {
+    const selected = state.data.settings.uiStyle || "royal-pink";
+    if (selected === "random") {
+      if (forceNewRandom || !UI_STYLE_IDS.includes(state.activeUiStyle)) {
+        state.activeUiStyle = UI_STYLE_IDS[Math.floor(Math.random() * UI_STYLE_IDS.length)];
+      }
+      return state.activeUiStyle;
+    }
+    state.activeUiStyle = UI_STYLE_IDS.includes(selected) ? selected : "royal-pink";
+    return state.activeUiStyle;
   }
 
   function bindGlobalEvents() {
@@ -275,6 +309,7 @@
       "reset-app": resetApp,
       "install-app": installApp,
       "select-theme": () => setTheme(actionButton.dataset.theme),
+      "select-ui-style": () => setUiStyle(actionButton.dataset.styleId),
       "select-objective-type": () => selectObjectiveType(actionButton.dataset.type),
       "dismiss-celebration": () => { celebrationRoot.innerHTML = ""; }
     };
@@ -366,12 +401,13 @@
     actionsEl.innerHTML = `<button class="btn btn-primary" data-action="new-objective">✦ <span class="long-label">New Objective</span></button>`;
 
     content.innerHTML = `
-      <section class="hero-card">
+      <section class="hero-card branded-hero">
         <div class="hero-copy">
           <p class="eyebrow">YOUR PERSONAL PROGRESSION</p>
           <h2>Build every skill, one task at a time.</h2>
           <p>Every completion awards XP based on difficulty. Reach Level 100, then keep growing through unlimited Mastery Points.</p>
         </div>
+        <img class="hero-logo" src="icons/logo.png" alt="Sissy Skill Tracker logo" />
         <div class="stat-grid">
           ${statTile(formatNumber(totals.xp), "Total XP")}
           ${statTile(formatNumber(totals.completions), "Task Completions")}
@@ -548,11 +584,17 @@
       <section class="settings-grid">
         <article class="settings-card">
           <h2>Appearance</h2>
-          <p>Choose the interface theme used every time the app opens.</p>
+          <p>Choose light or dark mode, then pick a visual skin independently.</p>
           <div class="theme-choice">
             ${themeOption("dark", "Dark Mode", "Deep, glowing game interface")}
             ${themeOption("light", "Light Mode", "Bright, clean progression interface")}
           </div>
+          <h3 class="settings-subtitle">UI Style</h3>
+          <div class="style-choice">
+            ${UI_STYLES.map(styleOption).join("")}
+            ${randomStyleOption()}
+          </div>
+          ${state.data.settings.uiStyle === "random" ? `<div class="setting-row compact"><div class="setting-copy"><strong>Current random style</strong><small>${esc(getUiStyleName(state.activeUiStyle))} — changes on full reload/open</small></div><span class="tag">Random</span></div>` : ""}
           ${toggleSetting("reduceAnimations", "Reduce animations", "Minimizes XP, modal, and level-up motion")}
           ${toggleSetting("floatingXp", "Floating XP notifications", "Shows the XP awarded after each completion")}
           ${toggleSetting("soundEffects", "Sound effects", "Plays a subtle tone for XP and level-ups")}
@@ -1204,6 +1246,15 @@
     render();
   }
 
+  function setUiStyle(styleId) {
+    state.data.settings.uiStyle = styleId === "random" || UI_STYLE_IDS.includes(styleId) ? styleId : "royal-pink";
+    state.activeUiStyle = resolveUiStyle(styleId === "random");
+    saveData();
+    applySettings();
+    render();
+    showToast("UI style saved", state.data.settings.uiStyle === "random" ? `Random on reload · now showing ${getUiStyleName(state.activeUiStyle)}` : getUiStyleName(state.activeUiStyle));
+  }
+
   function closeModal() {
     modalRoot.innerHTML = "";
   }
@@ -1369,6 +1420,30 @@
         <strong>${title}</strong><small>${subtitle}</small>
       </button>
     `;
+  }
+
+  function styleOption(style) {
+    return `
+      <button class="style-option ${state.data.settings.uiStyle === style.id ? "active" : ""}" data-action="select-ui-style" data-style-id="${style.id}">
+        <div class="style-swatch swatch-${style.id}"><span>${style.icon}</span></div>
+        <strong>${esc(style.name)}</strong>
+        <small>${esc(style.subtitle)}</small>
+      </button>
+    `;
+  }
+
+  function randomStyleOption() {
+    return `
+      <button class="style-option ${state.data.settings.uiStyle === "random" ? "active" : ""}" data-action="select-ui-style" data-style-id="random">
+        <div class="style-swatch swatch-random"><span>🎲</span></div>
+        <strong>Random on Reload</strong>
+        <small>Picks one of the ten styles every time the app opens.</small>
+      </button>
+    `;
+  }
+
+  function getUiStyleName(styleId) {
+    return UI_STYLES.find(style => style.id === styleId)?.name || "Royal Pink";
   }
 
   function toggleSetting(key, title, subtitle) {
