@@ -9,16 +9,16 @@
 
 
   const UI_STYLES = [
-    { id: "royal-pink", name: "Royal Pink", subtitle: "Crown, gold, pink, and gemstone progression", icon: "👑" },
-    { id: "neon-club", name: "Neon Club", subtitle: "Glowing nightclub pinks, purples, and cyan", icon: "💗" },
-    { id: "glitter-xp", name: "Glitter XP", subtitle: "Sparkly reward-screen energy", icon: "✨" },
-    { id: "dark-dungeon", name: "Dark Dungeon", subtitle: "Fantasy quest board with burgundy metal trim", icon: "🛡️" },
-    { id: "cute-pastel", name: "Cute Pastel", subtitle: "Soft pink, lavender, bows, and gentle cards", icon: "🎀" },
-    { id: "arcade-pixel", name: "Arcade Pixel", subtitle: "Retro game buttons, chunky XP, and pixel vibes", icon: "🕹️" },
-    { id: "luxury-black-gold", name: "Luxury Black & Gold", subtitle: "Premium black, plum, gold, and restrained shine", icon: "◆" },
-    { id: "cyber-sissy", name: "Cyber Sissy", subtitle: "Magenta/cyan futuristic tracker dashboard", icon: "▣" },
-    { id: "princess-academy", name: "Princess Academy", subtitle: "Ribbon badges, assignments, and certificate energy", icon: "🏵️" },
-    { id: "minimal-tracker", name: "Minimal Tracker", subtitle: "Clean, readable, and low-distraction", icon: "□" }
+    { id: "pink-sissy", name: "Pink Sissy", subtitle: "Bubblegum pink, hearts, gloss, and overtly girly flair", icon: "💖" },
+    { id: "dark-emo", name: "Dark Emo", subtitle: "Black, charcoal, crimson, and moody alt energy", icon: "🖤" },
+    { id: "fantasy-castle", name: "Fantasy Castle", subtitle: "Royal halls, banners, stone trim, and storybook fantasy", icon: "🏰" },
+    { id: "cyber-neon", name: "Cyber Neon", subtitle: "Futuristic magenta-cyan interface with glowing tech panels", icon: "⚡" },
+    { id: "arcade-pixel", name: "Arcade Pixel", subtitle: "Retro game UI with chunky pixels and CRT attitude", icon: "🕹️" },
+    { id: "kawaii-pastel", name: "Kawaii Pastel", subtitle: "Cute pastel candy colors, bows, and playful softness", icon: "🎀" },
+    { id: "gothic-cathedral", name: "Gothic Cathedral", subtitle: "Stained-glass jewel tones, ornate trim, and dramatic depth", icon: "⛪" },
+    { id: "royal-boudoir", name: "Royal Boudoir", subtitle: "Luxury velvet, gold, and feminine salon glamour", icon: "👑" },
+    { id: "enchanted-forest", name: "Enchanted Forest", subtitle: "Mystic green glow, woodland magic, and fae atmosphere", icon: "🌿" },
+    { id: "parchment-quest", name: "Parchment Quest", subtitle: "Cream parchment, ink, and old-school quest journal styling", icon: "📜" }
   ];
 
   const UI_STYLE_IDS = UI_STYLES.map(style => style.id);
@@ -151,8 +151,7 @@
       objectives: [],
       history: [],
       settings: {
-        theme: "dark",
-        uiStyle: "royal-pink",
+        uiStyle: "pink-sissy",
         reduceAnimations: false,
         soundEffects: false,
         floatingXp: true,
@@ -238,23 +237,21 @@
   }
 
   function applySettings() {
-    const theme = state.data.settings.theme === "light" ? "light" : "dark";
-    document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.style = resolveUiStyle(false);
     document.body.classList.toggle("reduce-motion", Boolean(state.data.settings.reduceAnimations));
-    const themeColor = getComputedStyle(document.documentElement).getPropertyValue("--bg-elevated").trim() || (theme === "light" ? "#f5effa" : "#171022");
+    const themeColor = getComputedStyle(document.documentElement).getPropertyValue("--bg-elevated").trim() || "#171022";
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor);
   }
 
   function resolveUiStyle(forceNewRandom = false) {
-    const selected = state.data.settings.uiStyle || "royal-pink";
+    const selected = state.data.settings.uiStyle || "pink-sissy";
     if (selected === "random") {
       if (forceNewRandom || !UI_STYLE_IDS.includes(state.activeUiStyle)) {
         state.activeUiStyle = UI_STYLE_IDS[Math.floor(Math.random() * UI_STYLE_IDS.length)];
       }
       return state.activeUiStyle;
     }
-    state.activeUiStyle = UI_STYLE_IDS.includes(selected) ? selected : "royal-pink";
+    state.activeUiStyle = UI_STYLE_IDS.includes(selected) ? selected : "pink-sissy";
     return state.activeUiStyle;
   }
 
@@ -308,7 +305,6 @@
       "import-backup": () => importInput.click(),
       "reset-app": resetApp,
       "install-app": installApp,
-      "select-theme": () => setTheme(actionButton.dataset.theme),
       "select-ui-style": () => setUiStyle(actionButton.dataset.styleId),
       "select-objective-type": () => selectObjectiveType(actionButton.dataset.type),
       "dismiss-celebration": () => { celebrationRoot.innerHTML = ""; }
@@ -584,11 +580,7 @@
       <section class="settings-grid">
         <article class="settings-card">
           <h2>Appearance</h2>
-          <p>Choose light or dark mode, then pick a visual skin independently.</p>
-          <div class="theme-choice">
-            ${themeOption("dark", "Dark Mode", "Deep, glowing game interface")}
-            ${themeOption("light", "Light Mode", "Bright, clean progression interface")}
-          </div>
+          <p>Choose one of ten fully different UI skins, or let the app pick a random one every time it reloads.</p>
           <h3 class="settings-subtitle">UI Style</h3>
           <div class="style-choice">
             ${UI_STYLES.map(styleOption).join("")}
@@ -1239,15 +1231,9 @@
     render();
   }
 
-  function setTheme(theme) {
-    state.data.settings.theme = theme === "light" ? "light" : "dark";
-    saveData();
-    applySettings();
-    render();
-  }
 
   function setUiStyle(styleId) {
-    state.data.settings.uiStyle = styleId === "random" || UI_STYLE_IDS.includes(styleId) ? styleId : "royal-pink";
+    state.data.settings.uiStyle = styleId === "random" || UI_STYLE_IDS.includes(styleId) ? styleId : "pink-sissy";
     state.activeUiStyle = resolveUiStyle(styleId === "random");
     saveData();
     applySettings();
@@ -1413,14 +1399,6 @@
     return `<button class="tab-button ${state.objectiveTab === key ? "active" : ""}" data-action="objective-tab" data-tab="${key}">${label} · ${count}</button>`;
   }
 
-  function themeOption(theme, title, subtitle) {
-    return `
-      <button class="theme-option ${state.data.settings.theme === theme ? "active" : ""}" data-action="select-theme" data-theme="${theme}">
-        <div class="theme-preview preview-${theme}"><div class="preview-side"></div><div class="preview-main"><div class="preview-line"></div><div class="preview-line short"></div><div class="preview-line"></div></div></div>
-        <strong>${title}</strong><small>${subtitle}</small>
-      </button>
-    `;
-  }
 
   function styleOption(style) {
     return `
@@ -1443,7 +1421,7 @@
   }
 
   function getUiStyleName(styleId) {
-    return UI_STYLES.find(style => style.id === styleId)?.name || "Royal Pink";
+    return UI_STYLES.find(style => style.id === styleId)?.name || "Pink Sissy";
   }
 
   function toggleSetting(key, title, subtitle) {
