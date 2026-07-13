@@ -24,15 +24,15 @@
   const UI_STYLE_IDS = UI_STYLES.map(style => style.id);
 
   const CATEGORY_DEFINITIONS = [
-    { id: "dress-up", name: "Dress Up", icon: "👗", accent: "#ff66b8" },
-    { id: "makeup", name: "Makeup", icon: "💄", accent: "#ec4cff" },
-    { id: "high-heels", name: "High Heels", icon: "👠", accent: "#a96cff" },
-    { id: "hygiene", name: "Hygiene", icon: "✨", accent: "#3fd7d0" },
-    { id: "servitude", name: "Servitude", icon: "🛎️", accent: "#6699ff" },
-    { id: "anal", name: "Anal", icon: "♦", accent: "#db4f9c" },
-    { id: "oral", name: "Oral", icon: "💋", accent: "#ff5f7f" },
-    { id: "exposure", name: "Exposure", icon: "👁️", accent: "#ff9f43" },
-    { id: "sexual-prowess", name: "Sexual Prowess", icon: "🔥", accent: "#f5c451" }
+    { id: "dress-up", name: "Dress Up", icon: "👗", logo: "category-logos/dress-up.png", accent: "#ff66b8" },
+    { id: "makeup", name: "Makeup", icon: "💄", logo: "category-logos/makeup.png", accent: "#ec4cff" },
+    { id: "high-heels", name: "High Heels", icon: "👠", logo: "category-logos/high-heels.png", accent: "#a96cff" },
+    { id: "hygiene", name: "Hygiene", icon: "✨", logo: "category-logos/hygiene.png", accent: "#3fd7d0" },
+    { id: "servitude", name: "Servitude", icon: "🛎️", logo: "category-logos/servitude.png", accent: "#6699ff" },
+    { id: "anal", name: "Anal", icon: "♦", logo: "category-logos/anal.png", accent: "#db4f9c" },
+    { id: "oral", name: "Oral", icon: "💋", logo: "category-logos/oral.png", accent: "#ff5f7f" },
+    { id: "exposure", name: "Exposure", icon: "👁️", logo: "category-logos/exposure.png", accent: "#ff9f43" },
+    { id: "sexual-prowess", name: "Sexual Prowess", icon: "🔥", logo: "category-logos/sexual-prowess.png", accent: "#f5c451" }
   ];
 
   const RANKS = {
@@ -475,8 +475,10 @@
     `;
 
     content.innerHTML = `
-      <section class="category-hero" style="--accent:${category.accent}">
-        <div class="category-hero-icon">${category.icon}</div>
+      <section class="category-hero category-hero-with-logo" style="--accent:${category.accent}">
+        <div class="category-hero-art">
+          ${category.logo ? `<img class="category-logo-img" src="${escAttr(category.logo)}" alt="${escAttr(category.name)} logo">` : `<div class="category-hero-icon">${category.icon}</div>`}
+        </div>
         <div>
           <h2>${esc(category.name)}</h2>
           <p class="rank-name">${esc(rank)}</p>
@@ -631,11 +633,15 @@
     const completions = category.tasks.reduce((sum, task) => sum + task.completions, 0);
     const activeTasks = category.tasks.filter(task => !task.archived).length;
 
+    const logo = category.logo
+      ? `<img class="category-logo-img" src="${escAttr(category.logo)}" alt="${escAttr(category.name)} logo" loading="lazy">`
+      : `<div class="category-icon">${category.icon}</div>`;
+
     return `
-      <article class="category-card" style="--accent:${category.accent}" data-action="open-category" data-category-id="${category.id}" role="button" tabindex="0">
-        <div class="category-top">
-          <div class="category-icon">${category.icon}</div>
-          <span class="level-badge">Level ${level}</span>
+      <article class="category-card category-card-with-logo" style="--accent:${category.accent}" data-action="open-category" data-category-id="${category.id}" role="button" tabindex="0">
+        <div class="category-card-art">
+          ${logo}
+          <span class="level-badge category-art-badge">Level ${level}</span>
         </div>
         <h3>${esc(category.name)}</h3>
         <p class="rank-name">${esc(getRank(category))}</p>
