@@ -1,4 +1,4 @@
-const CACHE_NAME = "sissy-skill-tracker-v2";
+const CACHE_NAME = "sissy-skill-tracker-v3";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -9,7 +9,16 @@ const APP_FILES = [
   "./icons/icon-512.png",
   "./icons/favicon-32.png",
   "./icons/favicon-64.png",
-  "./icons/logo.png"
+  "./icons/logo.png",
+  "./category-logos/dress-up.png",
+  "./category-logos/makeup.png",
+  "./category-logos/high-heels.png",
+  "./category-logos/hygiene.png",
+  "./category-logos/servitude.png",
+  "./category-logos/anal.png",
+  "./category-logos/oral.png",
+  "./category-logos/exposure.png",
+  "./category-logos/sexual-prowess.png"
 ];
 
 self.addEventListener("install", event => {
